@@ -12,8 +12,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.database.Cursor;
 import android.os.Handler;
 import android.os.IBinder;
+import android.util.Log;
+import android.widget.Toast;
 
 public class FloatWindowService extends Service {
 
@@ -26,6 +29,16 @@ public class FloatWindowService extends Service {
 	 * 定时器，定时进行检测当前应该创建还是移除悬浮窗。
 	 */
 	private Timer timer;
+	
+	/**
+	 * 数据库存储
+	 */
+	private DatabaseHelper mDatabaseHelper;
+	
+	/**
+	 * 数据库信息保存到数组中
+	 */
+	private static ArrayList<String> mAppList;
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -34,6 +47,19 @@ public class FloatWindowService extends Service {
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
+	    
+	    // 获取数据库列表，保存到mAppList中
+	    mDatabaseHelper = new DatabaseHelper(getApplicationContext());
+	    Cursor cursor = mDatabaseHelper.selectForChecked(true);
+	    mAppList = new ArrayList<String>();
+	    if (cursor.getCount()==0) {
+	        mAppList.add("null");
+	    } else {
+	        while (cursor.moveToNext()) {
+	            mAppList.add(cursor.getString(2));
+	        }
+	    }
+	    
 		// 开启定时器，每隔0.5秒刷新一次
 		if (timer == null) {
 			timer = new Timer();
@@ -41,6 +67,33 @@ public class FloatWindowService extends Service {
 		}
 		new RefreshTask();
 		return super.onStartCommand(intent, flags, startId);
+	}
+	
+	/**
+	 * 获取当前界面顶部的Acivity名称
+	 * @return 返回完整的类名
+	 */
+	private String getTopAppName() {
+	    ActivityManager mActivityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        List<RunningTaskInfo> rti = mActivityManager.getRunningTasks(1);
+        return rti.get(0).topActivity.getClassName();
+	}
+	
+	/**
+     * 获取当前界面顶部的Acivity包名称
+     * @return 返回包名
+     */
+    private String getTopPackageName() {
+        ActivityManager mActivityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        List<RunningTaskInfo> rti = mActivityManager.getRunningTasks(1);
+        return rti.get(0).topActivity.getPackageName();
+    }
+	
+	/**
+	 * 判断是否为被添加进appList
+	 */
+	private boolean isInList() {
+	    return mAppList.isEmpty() ? false : mAppList.contains(getTopAppName());
 	}
 
 	@Override
@@ -62,7 +115,7 @@ public class FloatWindowService extends Service {
 					public void run() {
 					    if (MyWindowManager.getAddState()) {
 					        MyWindowManager.createAddWindow(getApplicationContext());
-					    } else {
+					    } else if (isInList()) {
 					        MyWindowManager.createSmallWindow(getApplicationContext());
 					    }
 					}
@@ -79,6 +132,12 @@ public class FloatWindowService extends Service {
 					}
 				});
 			}
+			//闪动效果
+//			else {
+//			    MyWindowManager.removeSmallWindow(getApplicationContext());
+//                MyWindowManager.removeBigWindow(getApplicationContext());
+//                MyWindowManager.removeAddWindow(getApplicationContext());
+//			}
 //			// 当前界面是桌面，且有悬浮窗显示，则更新内存数据。
 //			else if (isHome() && MyWindowManager.isWindowShowing()) {
 //				handler.post(new Runnable() {
@@ -100,9 +159,7 @@ public class FloatWindowService extends Service {
 	 * 判断当前界面是否是桌面
 	 */
 	private boolean isHome() {
-		ActivityManager mActivityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-		List<RunningTaskInfo> rti = mActivityManager.getRunningTasks(1);
-		return getHomes().contains(rti.get(0).topActivity.getPackageName());
+		return getHomes().contains(getTopPackageName());
 	}
 
 	/**

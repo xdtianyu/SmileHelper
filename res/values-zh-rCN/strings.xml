@@ -9,4 +9,5 @@
 	<string name="add_summary">点击浮窗中的添加按钮添加应用界面到浮窗，完成后将在下次进入应用界面时自动弹出浮窗。</string>
     <string name="string_finish">完成</string>
     <string name="string_return">返回</string>
+    <string name="string_added">已添加</string>
 </resources>

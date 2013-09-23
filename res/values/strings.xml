@@ -9,4 +9,5 @@
     <string name="add_summary">by touch add button on applation screen, then enter applation again the floating will show. </string>
     <string name="string_finish">finish</string>
     <string name="string_return">return</string>
+    <string name="string_added">Added</string>
 </resources>

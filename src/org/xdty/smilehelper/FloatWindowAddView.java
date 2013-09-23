@@ -3,12 +3,11 @@ package org.xdty.smilehelper;
 import java.lang.reflect.Field;
 import java.util.List;
 
-import org.xdty.smilehelper.R;
-
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningTaskInfo;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -33,6 +32,11 @@ public class FloatWindowAddView extends LinearLayout {
      * 用于更新添加悬浮窗的位置
      */
     private WindowManager windowManager;
+    
+    /**
+     * 数据库存储
+     */
+    private DatabaseHelper mDatabaseHelper;
 
     /**
      * 添加悬浮窗的参数
@@ -87,7 +91,23 @@ public class FloatWindowAddView extends LinearLayout {
             @Override
             public void onClick(View v) {
                 // 点击添加后添加当前的activity到数据库
-                Toast.makeText(context, getTopActivityName(context), Toast.LENGTH_LONG).show();
+                String appName = getTopActivityName(context);
+                mDatabaseHelper = new DatabaseHelper(context);
+                Cursor cursor = mDatabaseHelper.selectAll();
+                boolean hasValue = false;
+                while (cursor.moveToNext()) {
+                    if(cursor.getString(2).equals(appName)) {
+                        mDatabaseHelper.update(cursor.getInt(0), true);
+                        hasValue = true;
+                        break;
+                    }
+                }
+                if (!hasValue) {
+                    cursor.moveToLast();
+                    int index = (cursor.getCount()==0)?1:cursor.getInt(1)+1;
+                    mDatabaseHelper.insert(index, appName, true);
+                }
+                Toast.makeText(context, R.string.string_added, Toast.LENGTH_LONG).show();
             }
         });
         finish.setOnClickListener(new OnClickListener() {
