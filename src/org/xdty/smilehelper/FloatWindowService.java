@@ -128,7 +128,9 @@ public class FloatWindowService extends Service {
 					public void run() {
 						MyWindowManager.removeSmallWindow(getApplicationContext());
 						MyWindowManager.removeBigWindow(getApplicationContext());
-						MyWindowManager.removeAddWindow(getApplicationContext());
+						if (isHome()) {
+						    MyWindowManager.removeAddWindow(getApplicationContext());
+						}
 					}
 				});
 			}
