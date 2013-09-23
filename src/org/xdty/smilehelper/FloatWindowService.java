@@ -122,7 +122,7 @@ public class FloatWindowService extends Service {
 				});
 			}
 			
-			else if (isHome() && MyWindowManager.isWindowShowing()) {
+			else if ((!isInList()||isHome()) && MyWindowManager.isWindowShowing()) {
 				handler.post(new Runnable() {
 					@Override
 					public void run() {
