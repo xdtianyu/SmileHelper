@@ -23,6 +23,7 @@ public class MainActivity extends Activity {
 				Intent intent = new Intent(MainActivity.this, FloatWindowService.class);
 				startService(intent);
 				FloatWindowSmallView.close = false;
+				MyWindowManager.setAddState(false);
 				finish();
 			}
 		});
@@ -33,6 +34,18 @@ public class MainActivity extends Activity {
             public void onClick(View arg0) {
                 MyWindowManager.removeSmallWindow(getContext());
                 FloatWindowSmallView.close = true;
+            }
+        });
+		
+		Button addFloatWindow = (Button) findViewById(R.id.add_float_window);
+		addFloatWindow.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, FloatWindowService.class);
+                startService(intent);
+                FloatWindowSmallView.close = false;
+                MyWindowManager.setAddState(true);
+                finish();
             }
         });
 	}

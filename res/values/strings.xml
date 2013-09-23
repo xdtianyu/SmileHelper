@@ -5,5 +5,8 @@
     <string name="action_settings">Settings</string>
     <string name="start_floating">start smile floating</string>
     <string name="close_floating">close smile floating</string>
+    <string name="add_floating">add applation</string>
+    <string name="add_summary">by touch add button on applation screen, then enter applation again the floating will show. </string>
+    <string name="string_finish">finish</string>
     <string name="string_return">return</string>
 </resources>

@@ -60,7 +60,11 @@ public class FloatWindowService extends Service {
 				handler.post(new Runnable() {
 					@Override
 					public void run() {
-						MyWindowManager.createSmallWindow(getApplicationContext());
+					    if (MyWindowManager.getAddState()) {
+					        MyWindowManager.createAddWindow(getApplicationContext());
+					    } else {
+					        MyWindowManager.createSmallWindow(getApplicationContext());
+					    }
 					}
 				});
 			}
@@ -71,6 +75,7 @@ public class FloatWindowService extends Service {
 					public void run() {
 						MyWindowManager.removeSmallWindow(getApplicationContext());
 						MyWindowManager.removeBigWindow(getApplicationContext());
+						MyWindowManager.removeAddWindow(getApplicationContext());
 					}
 				});
 			}

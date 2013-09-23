@@ -17,4 +17,11 @@
         android:layout_height="wrap_content"
         android:text="@string/close_floating" >
     </Button>
+    <Button
+        android:id="@+id/add_float_window"
+        android:layout_below="@id/stop_float_window"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/add_floating" >
+    </Button>
 </RelativeLayout>

@@ -5,5 +5,8 @@
     <string name="action_settings">设置</string>
     <string name="start_floating">开启悬表情浮窗</string>
 	<string name="close_floating">关闭悬表情浮窗</string>
+	<string name="add_floating">添加</string>
+	<string name="add_summary">点击浮窗中的添加按钮添加应用界面到浮窗，完成后将在下次进入应用界面时自动弹出浮窗。</string>
+    <string name="string_finish">完成</string>
     <string name="string_return">返回</string>
 </resources>

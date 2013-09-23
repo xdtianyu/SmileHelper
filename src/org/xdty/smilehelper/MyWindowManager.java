@@ -4,15 +4,12 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
-import org.xdty.smilehelper.R;
-
 import android.app.ActivityManager;
 import android.content.Context;
 import android.graphics.PixelFormat;
 import android.view.Gravity;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
-import android.widget.TextView;
 
 public class MyWindowManager {
 
@@ -25,6 +22,11 @@ public class MyWindowManager {
 	 * 大悬浮窗View的实例
 	 */
 	private static FloatWindowBigView bigWindow;
+	
+	/**
+	 * 添加悬浮窗View的实例
+	 */
+	private static FloatWindowAddView addWindow;
 
 	/**
 	 * 小悬浮窗View的参数
@@ -35,6 +37,11 @@ public class MyWindowManager {
 	 * 大悬浮窗View的参数
 	 */
 	private static LayoutParams bigWindowParams;
+	
+	/**
+	 * 添加悬浮窗View的参数
+	 */
+	private static LayoutParams addWindowParams;
 
 	/**
 	 * 用于控制在屏幕上添加或移除悬浮窗
@@ -45,6 +52,11 @@ public class MyWindowManager {
 	 * 用于获取手机可用内存
 	 */
 	private static ActivityManager mActivityManager;
+	
+	/**
+	 * 当前添加悬浮窗显示的状态
+	 */
+	private static boolean addFloatViewState = false;
 
 	/**
 	 * 创建一个小悬浮窗。初始位置为屏幕的右部中间位置。
@@ -89,7 +101,7 @@ public class MyWindowManager {
 			smallWindow = null;
 		}
 	}
-
+	
 	/**
 	 * 创建一个大悬浮窗。位置为屏幕正中间。
 	 * 
@@ -129,6 +141,49 @@ public class MyWindowManager {
 			bigWindow = null;
 		}
 	}
+	
+	/**
+	 * 创建一个添加悬浮窗，位置位于屏幕正中间。
+	 * @param context
+	 *             必须为应用程序的Context.
+	 */
+	public static void createAddWindow(Context context) {
+	    WindowManager windowManager = getWindowManager(context);
+        int screenWidth = windowManager.getDefaultDisplay().getWidth();
+        int screenHeight = windowManager.getDefaultDisplay().getHeight();
+        if (addWindow == null) {
+            addWindow = new FloatWindowAddView(context);
+            if (addWindowParams == null) {
+                addWindowParams = new LayoutParams();
+                addWindowParams.x = screenWidth / 2 - FloatWindowBigView.viewWidth / 2;
+                addWindowParams.y = screenHeight / 2 - FloatWindowAddView.viewHeight / 2;
+                addWindowParams.type = LayoutParams.TYPE_PHONE;
+                addWindowParams.format = PixelFormat.RGBA_8888;
+                addWindowParams.gravity = Gravity.LEFT | Gravity.TOP;
+                addWindowParams.width = FloatWindowAddView.viewWidth;
+                addWindowParams.height = FloatWindowAddView.viewHeight;
+                addWindowParams.flags = LayoutParams.FLAG_NOT_TOUCH_MODAL
+                        | LayoutParams.FLAG_NOT_FOCUSABLE;
+            }
+            addWindow.setParams(addWindowParams);
+            windowManager.addView(addWindow, addWindowParams);
+        }
+	}
+	
+    /**
+    * 将添加悬浮窗从屏幕上移除。
+    * 
+    * @param context
+    *            必须为应用程序的Context.
+    */
+   
+   public static void removeAddWindow(Context context) {
+       if (addWindow !=null) {
+           WindowManager windowManager = getWindowManager(context);
+           windowManager.removeView(addWindow);
+           addWindow = null;
+       }
+   }
 
 	/**
 	 * 更新小悬浮窗的TextView上的数据，显示内存使用的百分比。
@@ -149,7 +204,7 @@ public class MyWindowManager {
 	 * @return 有悬浮窗显示在桌面上返回true，没有的话返回false。
 	 */
 	public static boolean isWindowShowing() {
-		return smallWindow != null || bigWindow != null;
+		return smallWindow != null || bigWindow != null || addWindow != null;
 	}
 
 	/**
@@ -216,6 +271,20 @@ public class MyWindowManager {
 		ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
 		getActivityManager(context).getMemoryInfo(mi);
 		return mi.availMem;
+	}
+	
+	/**
+	 * 设置addFloatViewState的状态
+	 */
+	public static void setAddState(boolean use) {
+	    addFloatViewState = use;
+	}
+	
+	/**
+	 * 获取addFloatViewState的状态
+	 */
+	public static boolean getAddState() {
+	    return addFloatViewState;
 	}
 
 }
