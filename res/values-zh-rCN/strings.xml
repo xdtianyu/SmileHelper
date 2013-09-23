@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">表情浮窗</string>
+    <string name="action_settings">设置</string>
+    <string name="start_floating">开启悬表情浮窗</string>
+	<string name="close_floating">关闭悬表情浮窗</string>
+    <string name="string_return">返回</string>
+</resources>
